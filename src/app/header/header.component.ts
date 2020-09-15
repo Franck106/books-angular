@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthorizationService } from '../service/authorization.service';
 
 @Component({
   selector: 'app-header',
@@ -14,13 +16,16 @@ import { Component, OnInit } from '@angular/core';
               <a routerLink="/">Home Page</a>
           </li>
           <li routerLinkActive="active">
-              <a routerLink="/restapi">Rest Call</a>
+              <a *ngIf="auth.isLoggedIn()" routerLink="/restapi">Rest Call</a>
           </li>
           <li routerLinkActive="active">
-              <a routerLink="/register">Register</a>
+              <a *ngIf="! auth.isLoggedIn()" routerLink="/register">Register</a>
           </li>
           <li routerLinkActive="active">
-              <a routerLink="/login">Login</a>
+              <a *ngIf="! auth.isLoggedIn()" routerLink="/login">Login</a>
+          </li>
+          <li routerLinkActive="active">
+              <button *ngIf="auth.isLoggedIn()" (clcik)="doLogOut()">logout</button>
           </li>
         </ul>
       </div>
@@ -30,7 +35,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(public auth: AuthorizationService,
+    private route: Router) { }
+
+  doLogOut() {
+    this.auth.logOut();
+    this.route.navigateByUrl('/login');
+  }
 
   ngOnInit(): void {
   }
